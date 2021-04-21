@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE hibernate-configuration PUBLIC  
+          "-//Hibernate/Hibernate Configuration DTD 5.3//EN"  
+          " http://www.jboss.org/dtd/hibernate/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/LearnersAcademyDb</property>
+
+		<property name="hibernate.connection.username">root</property>
+
+		<property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		
+		<property name="hibernate.hbm2ddl.auto">validate</property>
+
+		<property name="connection.pool_size">30</property>
+
+		<mapping class="com.learnersAcademy.dto.ClassesDto"></mapping>
+
+		<mapping class="com.learnersAcademy.dto.StudentsDto"></mapping>
+
+		<mapping class="com.learnersAcademy.dto.SubjectsDto"></mapping>
+
+		<mapping class="com.learnersAcademy.dto.TeachersDto"></mapping>
+		
+		<mapping class="com.learnersAcademy.dto.AssignmentsMappingDto"></mapping>
+
+
+	</session-factory>
+
+
+	<!-- <property name="hibernate.connection.username">username</property> 
+		<property name="hibernate.connection.password">password</property> -->
+
+</hibernate-configuration>
