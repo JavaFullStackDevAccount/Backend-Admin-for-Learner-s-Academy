@@ -47,7 +47,7 @@ public class AddLaClasse extends HttpServlet {
 
 					} else {
 
-						throw new Exception("Error adding Class");
+						throw new Exception("Problem adding Class");
 					}
 
 				} else {

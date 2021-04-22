@@ -51,9 +51,9 @@ public class AddStudents extends HttpServlet {
 
 					} else {
 						
-						System.out.println("Error adding Student");
+						System.out.println("Problem adding Student");
 
-						throw new Exception("Error adding Student");
+						throw new Exception("Problem adding Student");
 					}
 
 				} else {

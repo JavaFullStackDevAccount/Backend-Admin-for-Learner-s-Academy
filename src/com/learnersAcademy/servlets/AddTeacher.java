@@ -49,7 +49,7 @@ public class AddTeacher extends HttpServlet {
 
 					} else {
 
-						throw new Exception("Error adding teacher");
+						throw new Exception("Problem adding teacher");
 					}
 
 				} else {

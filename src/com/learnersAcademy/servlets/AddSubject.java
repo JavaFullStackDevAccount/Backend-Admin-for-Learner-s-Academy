@@ -49,7 +49,7 @@ public class AddSubject extends HttpServlet {
 
 					} else {
 
-						throw new Exception("Error adding Subject");
+						throw new Exception("Problem adding Subject");
 					}
 
 				} else {

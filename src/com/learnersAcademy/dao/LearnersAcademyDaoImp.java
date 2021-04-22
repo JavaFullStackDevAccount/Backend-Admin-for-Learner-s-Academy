@@ -32,6 +32,14 @@ public class LearnersAcademyDaoImp {
 
 	private SessionFactory sessionFactory;
 
+	private static final String TEACHER_TABLE = "teachers";
+
+	private static final String SUBJECT_TABLE = "subjects";
+
+	private static final String LA_CLASS_TABLE = "la_classes";
+
+	private static final String STUDENTS_TABLE = "students";
+
 	@SuppressWarnings("deprecation")
 	public LearnersAcademyDaoImp() {
 		super();
@@ -55,11 +63,15 @@ public class LearnersAcademyDaoImp {
 	}
 
 	private void rollBackTransaction(Transaction transcation) {
+		
 		transcation.rollback();
 	}
 
 	private void handleException(Exception e) {
-		e.printStackTrace();
+		
+		System.out.println("Database opration blocked");
+		
+		//e.printStackTrace();
 	}
 
 	private List<String> executeAndGetResultOfQuery(String query, Object... config) {
@@ -99,7 +111,7 @@ public class LearnersAcademyDaoImp {
 			 * @JoinColumn(name = "teachersId") private TeachersDto teacherAssignedToClass;
 			 */
 
-			final String QUERY = "select  classId, className  from la_classes";
+			final String QUERY = "select  classId, className  from " + LA_CLASS_TABLE;
 
 			return QueryResultToArrayList.extract(executeAndGetResultOfQuery(QUERY, session, txn));
 
@@ -145,7 +157,7 @@ public class LearnersAcademyDaoImp {
 			 * teacherAssignedToSubject;
 			 */
 
-			final String QUERY = "select subjectId, subjectName   from subjects";
+			final String QUERY = "select subjectId, subjectName  from " + SUBJECT_TABLE;
 
 			return QueryResultToArrayList.extract(executeAndGetResultOfQuery(QUERY, session, txn));
 
@@ -192,7 +204,7 @@ public class LearnersAcademyDaoImp {
 			 * subjectsAssignedToTeacher;
 			 */
 
-			final String QUERY = "select teachersId, teachersName   from teachers";
+			final String QUERY = "select teachersId, teachersName   from " + TEACHER_TABLE;
 
 			return QueryResultToArrayList.extract(executeAndGetResultOfQuery(QUERY, session, txn));
 
@@ -229,7 +241,7 @@ public class LearnersAcademyDaoImp {
 			 * @JoinColumn(name = "classId") private ClassesDto classId;
 			 */
 
-			final String QUERY = "select  studentsName  from students where classId = " + classId;
+			final String QUERY = "select  studentsName  from " + STUDENTS_TABLE + " where classId = " + classId;
 
 			return (ArrayList<String>) executeAndGetResultOfQuery(QUERY, session, txn);
 
@@ -379,14 +391,46 @@ public class LearnersAcademyDaoImp {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
-
 			rollBackTransaction(txn);
 
 			closeDatabaseSession(session);
 
 		}
 		return false;
+	}
+
+	private boolean checkIfExistInTable(String tableName, String columnValue, String columnName) {
+
+		Session session = getDatabaseSession();
+
+		Transaction txn = getTransaction(session);
+
+		try {
+
+			StringBuilder QUERY = new StringBuilder();
+
+			QUERY.append(" select * from " + tableName);
+
+			QUERY.append(" where ");
+
+			QUERY.append(" LOWER(REPLACE(" + columnName + ",' ','')) ");
+
+			QUERY.append(" = ");
+
+			QUERY.append(" '" + columnValue.replaceAll(" ", "").toLowerCase() + "' ");
+
+			ArrayList<String> result = (ArrayList<String>) executeAndGetResultOfQuery(QUERY.toString(), session, txn);
+
+			return !(result == null || result.size() == 0);
+
+		} catch (Exception e) {
+
+			rollBackTransaction(txn);
+
+			closeDatabaseSession(session);
+
+			return false;
+		}
 	}
 
 	public boolean addTeacher(String teacherName) {
@@ -397,21 +441,27 @@ public class LearnersAcademyDaoImp {
 
 		try {
 
-			TeachersDto teacherDto = new TeachersDto();
+			if (!checkIfExistInTable(TEACHER_TABLE, teacherName, "teachersName")) {
 
-			teacherDto.setTeachersName(teacherName);
+				TeachersDto teacherDto = new TeachersDto();
 
-			session.save(teacherDto);
+				teacherDto.setTeachersName(teacherName);
 
-			txn.commit();
+				session.save(teacherDto);
 
-			closeDatabaseSession(session);
+				txn.commit();
 
-			return true;
+				closeDatabaseSession(session);
+
+				return true;
+
+			} else {
+
+				throwRecordExistException();
+
+			}
 
 		} catch (Exception e) {
-
-			e.printStackTrace();
 
 			rollBackTransaction(txn);
 
@@ -429,19 +479,25 @@ public class LearnersAcademyDaoImp {
 
 		try {
 
-			SubjectsDto subjectDto = new SubjectsDto(0, subjectName);
+			if (!checkIfExistInTable(SUBJECT_TABLE, subjectName, "subjectName")) {
 
-			session.save(subjectDto);
+				SubjectsDto subjectDto = new SubjectsDto(0, subjectName);
 
-			txn.commit();
+				session.save(subjectDto);
 
-			closeDatabaseSession(session);
+				txn.commit();
 
-			return true;
+				closeDatabaseSession(session);
+
+				return true;
+
+			} else {
+
+				throwRecordExistException();
+
+			}
 
 		} catch (Exception e) {
-
-			e.printStackTrace();
 
 			rollBackTransaction(txn);
 
@@ -459,19 +515,25 @@ public class LearnersAcademyDaoImp {
 
 		try {
 
-			ClassesDto laClassDto = new ClassesDto(0, laClassName);
+			if (!checkIfExistInTable(LA_CLASS_TABLE, laClassName, "className")) {
 
-			session.save(laClassDto);
+				ClassesDto laClassDto = new ClassesDto(0, laClassName);
 
-			txn.commit();
+				session.save(laClassDto);
 
-			closeDatabaseSession(session);
+				txn.commit();
 
-			return true;
+				closeDatabaseSession(session);
+
+				return true;
+
+			} else {
+
+				throwRecordExistException();
+
+			}
 
 		} catch (Exception e) {
-
-			e.printStackTrace();
 
 			rollBackTransaction(txn);
 
@@ -489,25 +551,31 @@ public class LearnersAcademyDaoImp {
 
 		try {
 
-			ClassesDto laClassDto = (ClassesDto) session.load(ClassesDto.class, classId);
+			if (!checkIfExistInTable(STUDENTS_TABLE, studentName, "studentsName")) {
 
-			StudentsDto studentDto = new StudentsDto();
+				ClassesDto laClassDto = (ClassesDto) session.load(ClassesDto.class, classId);
 
-			studentDto.setStudentsName(studentName);
+				StudentsDto studentDto = new StudentsDto();
 
-			studentDto.setClassId(laClassDto);
+				studentDto.setStudentsName(studentName);
 
-			session.save(studentDto);
+				studentDto.setClassId(laClassDto);
 
-			txn.commit();
+				session.save(studentDto);
 
-			closeDatabaseSession(session);
+				txn.commit();
 
-			return true;
+				closeDatabaseSession(session);
+
+				return true;
+
+			} else {
+
+				throwRecordExistException();
+
+			}
 
 		} catch (Exception e) {
-
-			e.printStackTrace();
 
 			rollBackTransaction(txn);
 
@@ -639,4 +707,9 @@ public class LearnersAcademyDaoImp {
 
 	}
 
+	private void throwRecordExistException() throws Exception {
+		
+		throw new Exception("Record already present");
+		
+	}
 }

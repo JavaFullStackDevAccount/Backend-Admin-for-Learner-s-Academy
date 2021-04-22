@@ -118,8 +118,6 @@ public class CreateAssignments extends HttpServlet {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
-
 			return false;
 
 		}
