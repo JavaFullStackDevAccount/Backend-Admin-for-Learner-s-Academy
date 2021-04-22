@@ -209,6 +209,70 @@ public class LearnersAcademyDaoImp {
 		return null;
 	}
 
+	public ArrayList<String> getStudentsOfAcademyForClass(long classId) {
+
+		Session session = getDatabaseSession();
+
+		Transaction txn = getTransaction(session);
+
+		try {
+
+			/*
+			 * @Id
+			 * 
+			 * @GeneratedValue(strategy = GenerationType.AUTO) private long studentsId;
+			 * 
+			 * @Column private String studentsName;
+			 * 
+			 * @OneToOne
+			 * 
+			 * @JoinColumn(name = "classId") private ClassesDto classId;
+			 */
+
+			final String QUERY = "select  studentsName  from students where classId = " + classId;
+
+			return (ArrayList<String>) executeAndGetResultOfQuery(QUERY, session, txn);
+
+		} catch (Exception e) {
+
+			handleException(e);
+
+		} finally {
+
+			closeDatabaseSession(session);
+
+		}
+
+		return null;
+	}
+
+	public ArrayList<String> getTeachersAndSubjectsOfAcademyForClass(long classId) {
+
+		Session session = getDatabaseSession();
+
+		Transaction txn = getTransaction(session);
+
+		try {
+
+			final String QUERY = "SELECT teachersName ,subjectName FROM `class_teachers_subjects_mapping` c_map "
+					+ "join subjects sub " + "on c_map.laSubjectId = sub.subjectId  " + "join teachers teacher  "
+					+ "on c_map.laTeacherId = teacher.teachersId  " + "WHERE c_map.laClassId = " + classId;
+
+			return QueryResultToArrayList.extract(executeAndGetResultOfQuery(QUERY, session, txn));
+
+		} catch (Exception e) {
+
+			handleException(e);
+
+		} finally {
+
+			closeDatabaseSession(session);
+
+		}
+
+		return null;
+	}
+
 	private boolean isRecordAlreadyPresent(ArrayList<String> arrayListOfDataToBeUpdated) {
 
 		long laClassId = Long.parseLong(arrayListOfDataToBeUpdated.get(0));
@@ -334,7 +398,7 @@ public class LearnersAcademyDaoImp {
 		try {
 
 			TeachersDto teacherDto = new TeachersDto();
-			
+
 			teacherDto.setTeachersName(teacherName);
 
 			session.save(teacherDto);
@@ -424,13 +488,13 @@ public class LearnersAcademyDaoImp {
 		Transaction txn = getTransaction(session);
 
 		try {
-			
+
 			ClassesDto laClassDto = (ClassesDto) session.load(ClassesDto.class, classId);
-			
+
 			StudentsDto studentDto = new StudentsDto();
-			
+
 			studentDto.setStudentsName(studentName);
-			
+
 			studentDto.setClassId(laClassDto);
 
 			session.save(studentDto);
@@ -453,7 +517,6 @@ public class LearnersAcademyDaoImp {
 		return false;
 	}
 
-	
 	/* This on only used to populate database at the start */
 
 	public void setInitialClasses(String className) {

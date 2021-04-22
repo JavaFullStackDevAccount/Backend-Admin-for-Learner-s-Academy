@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.learnersAcademy.dao.LearnersAcademyDaoImp;
 import com.learnersAcademy.helpers.JsAlert;
 import com.learnersAcademy.helpers.RequestValidator;
+import com.learnersAcademy.helpers.SessionValidator;
 
 /**
  * Servlet implementation class AddSubject
@@ -29,32 +30,41 @@ public class AddSubject extends HttpServlet {
 	}
 
 	private boolean pushSubjectToDatabase(HttpServletRequest request) {
+		
 		return new LearnersAcademyDaoImp().addSubject(request.getParameter(SUBJECT_PARAM_KEY));
+		
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		try {
-			if (RequestValidator.requestHasParams(request, SUBJECT_PARAM_KEY)) {
+			if (SessionValidator.hasSession(request)) {
 
-				if (pushSubjectToDatabase(request)) {
+				if (RequestValidator.requestHasParams(request, SUBJECT_PARAM_KEY)) {
 
-					response.getWriter().println(JsAlert.getAlert("Subject added", "Dashboard"));
+					if (pushSubjectToDatabase(request)) {
+
+						response.getWriter().println(JsAlert.getAlert("Subject added", "Dashboard"));
+
+					} else {
+
+						throw new Exception("Error adding Subject");
+					}
 
 				} else {
 
-					throw new Exception("Error adding Subject");
-				}
+					throw new Exception("Cannot add empty Subject name");
 
+				}
 			} else {
 
-				throw new Exception("Cannot add empty Subject name");
+				throw new Exception("You need to login first");
 
 			}
 		} catch (Exception e) {
 
-			response.getWriter().println(JsAlert.getAlert("Unable to add Subject", "Dashboard"));
+			response.getWriter().println(JsAlert.getAlert(e.getMessage(), "Dashboard"));
 
 		}
 	}

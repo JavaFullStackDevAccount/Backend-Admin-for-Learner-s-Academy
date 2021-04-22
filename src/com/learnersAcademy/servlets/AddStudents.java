@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.learnersAcademy.dao.LearnersAcademyDaoImp;
 import com.learnersAcademy.helpers.JsAlert;
 import com.learnersAcademy.helpers.RequestValidator;
+import com.learnersAcademy.helpers.SessionValidator;
 
 /**
  * Servlet implementation class AddStudents
@@ -38,27 +39,54 @@ public class AddStudents extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
-			if (RequestValidator.requestHasParams(request, STUDENT_PARAM_KEY, CLASS_PARAM_KEY)) {
+			
+			
+			if (SessionValidator.hasSession(request)) {
+				
+				if (RequestValidator.requestHasParams(request, STUDENT_PARAM_KEY, CLASS_PARAM_KEY)) {
 
-				if (pushStudentToDatabase(request)) {
+					if (pushStudentToDatabase(request)) {
 
-					response.getWriter().println(JsAlert.getAlert("Student added", "Dashboard"));
+						response.getWriter().println(JsAlert.getAlert("Student added", "Dashboard"));
+
+					} else {
+						
+						System.out.println("Error adding Student");
+
+						throw new Exception("Error adding Student");
+					}
 
 				} else {
+					
+					System.out.println("Empty field found");
 
-					throw new Exception("Error adding Student");
-				}
+					throw new Exception("Cannot add empty Student name");
 
+				} 
 			} else {
-
-				throw new Exception("Cannot add empty Student name");
-
+				
+				throw new ServletException("You need to login first");
+				
 			}
-		} catch (Exception e) {
 			
-			e.printStackTrace();
+			
+			
+			
+		}
+		catch (ServletException e) {
+			
+			response.getWriter().println(JsAlert.getAlert(e.getMessage(), "Dashboard"));
 
-			response.getWriter().println(JsAlert.getAlert("Unable to add Student", "Dashboard"));
+		}
+		
+		
+		catch (Exception e) {
+			
+			System.out.println(e.getLocalizedMessage());
+			
+			System.out.println(e.getCause());
+			
+			response.getWriter().println(JsAlert.getAlert(e.getMessage(), "Dashboard"));
 
 		}
 	}

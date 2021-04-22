@@ -15,7 +15,7 @@
 	background-color: #E040FB;
 }
 
-.bg-purple:hover {
+.bg-purple:hover, .bg-purple:focus, .bg-purple:active {
 	background-color: #D500F9;
 }
 
@@ -23,12 +23,27 @@
 	background-color: #00796B;
 }
 
-.bg-accent:hover {
+.bg-accent:hover, .bg-accent:active, .bg-accent:focus {
 	background-color: #00695C;
 }
 </style>
 </head>
 <body>
+
+	<nav class="navbar navbar-expand-lg navbar-light bg-primary">
+		<a class="navbar-brand text-white" href="Dashboard">Learning
+			Academy</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNav">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item active"><a class="nav-link text-white"
+					href="logout">Logout <span class="sr-only">(current)</span></a></li>
+			</ul>
+		</div>
+	</nav>
 
 	<%!private final String CLASS_KEY_FOR_REQUEST = "la_classes";%>
 
@@ -151,7 +166,7 @@
 			</div>
 
 			<div class="col-11 mb-3 mx-auto">
-				<a href="createMapping"
+				<a href="classReport"
 					class="btn btn-success text-light bg-accent btn-block py-5 border-0"><span
 					class="h3">View class report</span></a>
 

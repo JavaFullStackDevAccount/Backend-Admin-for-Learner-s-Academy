@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.learnersAcademy.dao.LearnersAcademyDaoImp;
 import com.learnersAcademy.helpers.JsAlert;
 import com.learnersAcademy.helpers.RequestValidator;
+import com.learnersAcademy.helpers.SessionValidator;
 
 /**
  * Servlet implementation class AddTeacher
@@ -29,32 +30,42 @@ public class AddTeacher extends HttpServlet {
 	}
 
 	private boolean pushTeachersInfoToDatabase(HttpServletRequest request) {
+		
 		return new LearnersAcademyDaoImp().addTeacher(request.getParameter(TEACHER_PARAM_KEY));
+		
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		try {
-			if (RequestValidator.requestHasParams(request, TEACHER_PARAM_KEY)) {
+			if (SessionValidator.hasSession(request)) {
+				
+				if (RequestValidator.requestHasParams(request, TEACHER_PARAM_KEY)) {
 
-				if (pushTeachersInfoToDatabase(request)) {
+					if (pushTeachersInfoToDatabase(request)) {
 
-					response.getWriter().println(JsAlert.getAlert("Teacher added", "Dashboard"));
+						response.getWriter().println(JsAlert.getAlert("Teacher added", "Dashboard"));
+
+					} else {
+
+						throw new Exception("Error adding teacher");
+					}
 
 				} else {
 
-					throw new Exception("Error adding teacher");
-				}
+					throw new Exception("Cannot add empty teacher name");
 
+				} 
 			} else {
 
-				throw new Exception("Cannot add empty teacher name");
+				throw new Exception("You need to login first");
 
 			}
+			
 		} catch (Exception e) {
 
-			response.getWriter().println(JsAlert.getAlert("Unable to add teacher", "Dashboard"));
+			response.getWriter().println(JsAlert.getAlert(e.getMessage(), "Dashboard"));
 
 		}
 

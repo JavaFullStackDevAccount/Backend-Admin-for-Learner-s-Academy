@@ -13,8 +13,43 @@
 <body>
 
 
-	<div class="container pt-5 text-center">
-		<a href="Dashboard" class="btn btn-light bg-primary text-white">Login</a>
+	
+
+
+	<div
+		class="container mt-5 text-center d-flex align-items-center justify-content-center h-100">
+
+		<form method="post" action="login">
+			<div class="card mt-5">
+				<div class="card-header text-left">
+					<span class="h3 text-muted">Login</span>
+				</div>
+				<div class="card-body">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="btn btn-info text-white bg-info">Username</span>
+						</div>
+						<input type="email" name="userEmail"
+							placeholder="Enter your username ..." class="form-control"
+							required />
+					</div>
+
+					<div class="input-group mt-3">
+						<div class="input-group-prepend">
+							<span class="btn btn-info text-white bg-info">Password</span>
+						</div>
+						<input type="password" name="userPassword"
+							placeholder="Enter your password ..." class="form-control"
+							required />
+					</div>
+				</div>
+
+				<div class="card-footer text-right bg-white">
+					<button class="btn btn-white bg-success text-white" type="submit">Login</button>
+				</div>
+			</div>
+		</form>
+
 	</div>
 
 

@@ -8,10 +8,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+//import javax.servlet.http.HttpSession;
 
 import com.learnersAcademy.dao.LearnersAcademyDaoImp;
-import com.learnersAcademy.populateDb.PopulateDb;
+import com.learnersAcademy.helpers.SessionValidator;
+//import com.learnersAcademy.populateDb.PopulateDb;
 
 /**
  * Servlet implementation class Dashboard
@@ -28,18 +29,18 @@ public class Dashboard extends HttpServlet {
 		// TODO Auto-generated constructor stub
 	}
 
-	private void populateDatabaseAndSetSessionAttrib(HttpServletRequest request) {
-		/*HttpSession session = request.getSession(false);
-		if (session.getAttribute("dbAlreadyPopulated") == null) {
-			new PopulateDb();
-			System.out.println("Database populated");
-			session.setAttribute("dbAlreadyPopulated", true);
-		}*/
+	//private void populateDatabaseAndSetSessionAttrib(HttpServletRequest request) {
+		/*
+		 * HttpSession session = request.getSession(false); if
+		 * (session.getAttribute("dbAlreadyPopulated") == null) { new PopulateDb();
+		 * System.out.println("Database populated");
+		 * session.setAttribute("dbAlreadyPopulated", true); }
+		 */
 
-	}
+	//}
 
 	private ArrayList<String> getClassesInAcademy() {
-		
+
 		LearnersAcademyDaoImp learnersAcademyDaoImp = new LearnersAcademyDaoImp();
 
 		ArrayList<String> classesInAcademyArrayList = learnersAcademyDaoImp.getClassesOfAcademy();
@@ -51,13 +52,25 @@ public class Dashboard extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
-		populateDatabaseAndSetSessionAttrib(request);
+		// populateDatabaseAndSetSessionAttrib(request);
 
-		
-		request.setAttribute("la_classes", getClassesInAcademy());
-		
+		try {
+			if (SessionValidator.hasSession(request)) {
 
-		request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+				request.setAttribute("la_classes", getClassesInAcademy());
+
+				request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+
+			} else {
+
+				throw new Exception("You need to login first");
+
+			}
+
+		} catch (Exception e) {
+			
+			response.sendRedirect("http://localhost:8080/LearnersAcademy/");
+		}
 	}
 
 	/**

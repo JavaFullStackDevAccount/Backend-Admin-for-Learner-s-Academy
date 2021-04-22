@@ -12,6 +12,20 @@
 </head>
 <body>
 
+	<nav class="navbar navbar-expand-lg navbar-light bg-primary">
+		<a class="navbar-brand text-white" href="Dashboard">Learning
+			Academy</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNav">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item active"><a class="nav-link text-white"
+					href="logout">Logout <span class="sr-only">(current)</span></a></li>
+			</ul>
+		</div>
+	</nav>
 
 	<%!private final String CLASS_KEY_FOR_REQUEST = "la_classes";
 
@@ -86,7 +100,7 @@
 
 
 
-	<div class="container mt-5 h-100 text-center pt-5">
+	<div class="container mt-1 h-100 text-center pt-5">
 		<div
 			class="jumbotron mt-5 d-flex align-items-center justify-content-center bg-transparent w-100">
 			<div class="card w-50">

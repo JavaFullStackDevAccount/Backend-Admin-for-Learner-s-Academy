@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.learnersAcademy.dao.LearnersAcademyDaoImp;
 import com.learnersAcademy.helpers.JsAlert;
-import com.learnersAcademy.populateDb.PopulateDb;
+import com.learnersAcademy.helpers.SessionValidator;
+//import com.learnersAcademy.populateDb.PopulateDb;
 
 /**
  * Servlet implementation class AssignSubjectsToClass
@@ -128,17 +129,31 @@ public class CreateAssignments extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		response.getWriter().append("Served at: ").append(request.getContextPath());
 
-		setRequestAttributes(request);
+		try {
+			if (SessionValidator.hasSession(request)) {
+				
+				setRequestAttributes(request);
+				
+				request.getRequestDispatcher("create_assignments.jsp").forward(request, response);
+				
+			} else {
 
-		request.getRequestDispatcher("create_assignments.jsp").forward(request, response);
+				throw new Exception("You need to login first");
+
+			} 
+		} catch (Exception e) {
+			
+			response.getWriter().println(JsAlert.getAlert(e.getMessage(), "Dashboard"));
+
+		}
+		
+		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		System.out.println("I in post");
 
 		if (allFieldAreSelected(request)) {
 

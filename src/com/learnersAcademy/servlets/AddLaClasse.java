@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.learnersAcademy.dao.LearnersAcademyDaoImp;
 import com.learnersAcademy.helpers.JsAlert;
 import com.learnersAcademy.helpers.RequestValidator;
+import com.learnersAcademy.helpers.SessionValidator;
 
 /**
  * Servlet implementation class AddLaClasse
@@ -36,25 +37,32 @@ public class AddLaClasse extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		try {
-			if (RequestValidator.requestHasParams(request, LA_CLASS_PARAM_KEY)) {
+			if (SessionValidator.hasSession(request)) {
+				
+				if (RequestValidator.requestHasParams(request, LA_CLASS_PARAM_KEY)) {
 
-				if (pushLaClassToDatabase(request)) {
+					if (pushLaClassToDatabase(request)) {
 
-					response.getWriter().println(JsAlert.getAlert("Class added", "Dashboard"));
+						response.getWriter().println(JsAlert.getAlert("Class added", "Dashboard"));
+
+					} else {
+
+						throw new Exception("Error adding Class");
+					}
 
 				} else {
 
-					throw new Exception("Error adding Class");
-				}
+					throw new Exception("Cannot add empty Class name");
 
+				} 
 			} else {
-
-				throw new Exception("Cannot add empty Class name");
-
+				
+				throw new Exception("You need to login first");
+				
 			}
 		} catch (Exception e) {
 
-			response.getWriter().println(JsAlert.getAlert("Unable to add Class", "Dashboard"));
+			response.getWriter().println(JsAlert.getAlert(e.getMessage(), "Dashboard"));
 
 		}
 	}
